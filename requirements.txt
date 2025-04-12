@@ -1,0 +1,7 @@
+openai
+pandas
+pillow
+opencv-python
+easyocr
+pyautogui
+streamlit
