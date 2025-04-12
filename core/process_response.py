@@ -4,35 +4,26 @@ from core.scoring import calculate_score, calculate_long_score
 
 
 def mark_significance(row, previous_vwap=None):
-    """Kennzeichne jede Kennzahl entsprechend ihrer Wirkung im Scoring-Modell."""
-    def score_zenp(x):
-        return "+" if x < 4 else ("-" if x > 4 else "o")
+    """Kennzeichne nur Felder, die im LongScore explizit positiv gewertet wurden."""
+    marks = {k: "o" for k in ["ZENp", "AtrSprd", "AtrVWAP", "AtrHoD", "ZenV"]}
 
-    def score_atrsprd(x):
-        return "+" if x < 5 else ("-" if x > 15 else "o")
+    # Beispielhafte LongScore-Logik, analog zu bereinigtem calculate_long_score
+    if row["ZENp"] < 4:
+        marks["ZENp"] = "+"
+    if row["AtrSprd"] < 5:
+        marks["AtrSprd"] = "+"
+    if row["AtrVWAP"] > 0:
+        marks["AtrVWAP"] = "+"
+    if row["AtrHoD"] < 1:
+        marks["AtrHoD"] = "+"
+    if row["ZenV"] > 5:
+        marks["ZenV"] = "+"
 
-    def score_atrvwap(x):
-        return "+" if x > 0 else ("-" if x < 0 else "o")
-
-    def score_atrhod(x):
-        return "+" if x < 1 else ("-" if x > 5 else "o")
-
-    def score_zenv(x):
-        return "+" if x > 5 else ("-" if x < -2 else "o")
-
-    def score_vwap_flip(current_vwap, previous_vwap):
-        if previous_vwap is None:
-            return "o"
-        if previous_vwap < 0 < current_vwap:
-            return "+"
-        return "o"
-
-    row["ZENp"] = f"{row['ZENp']:.2f}{score_zenp(row['ZENp'])}"
-    row["AtrSprd"] = f"{row['AtrSprd']:.2f}{score_atrsprd(row['AtrSprd'])}"
-    row["AtrVWAP"] = f"{row['AtrVWAP']:.2f}{score_atrvwap(row['AtrVWAP'])}"
-    row["AtrHoD"] = f"{row['AtrHoD']:.2f}{score_atrhod(row['AtrHoD'])}"
-    row["ZenV"] = f"{row['ZenV']:.2f}{score_zenv(row['ZenV'])}"
-    row["VWAP_Flip"] = score_vwap_flip(row['AtrVWAP'], previous_vwap)
+    row["ZENp"] = f"{row['ZENp']:.2f}{marks['ZENp']}"
+    row["AtrSprd"] = f"{row['AtrSprd']:.2f}{marks['AtrSprd']}"
+    row["AtrVWAP"] = f"{row['AtrVWAP']:.2f}{marks['AtrVWAP']}"
+    row["AtrHoD"] = f"{row['AtrHoD']:.2f}{marks['AtrHoD']}"
+    row["ZenV"] = f"{row['ZenV']:.2f}{marks['ZenV']}"
 
     return row
 
@@ -54,15 +45,19 @@ def process_gpt_result(json_data, previous_vwap_map=None, filter_long_only=False
         axis=1
     )
 
-    # Long-optimierter Score
+    # Long-optimierter Score (nur positive Bedingungen)
     df["LongScore"] = df.apply(
-        lambda row: calculate_long_score(
-            row, previous_vwap=previous_vwap_map.get(row["Symbol"])
+        lambda row: (
+            (1 if row["ZENp"] < 4 else 0) +
+            (1 if row["AtrSprd"] < 5 else 0) +
+            (1 if row["AtrVWAP"] > 0 else 0) +
+            (1 if row["AtrHoD"] < 1 else 0) +
+            (1 if row["ZenV"] > 5 else 0)
         ),
         axis=1
     )
 
-    # Werte markieren basierend auf Scoring-Logik
+    # Werte markieren basierend auf LongScore-Logik
     df = df.apply(
         lambda row: mark_significance(
             row, previous_vwap=previous_vwap_map.get(row["Symbol"])
