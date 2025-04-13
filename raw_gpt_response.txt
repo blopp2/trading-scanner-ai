@@ -1,72 +1,72 @@
 [
     {
         "Symbol": "VERO",
-        "Price": 12.08,
+        "Price": "12.08",
         "Volume": "8.5M",
-        "ZenV": 36.47,
-        "ZenP": 5.1,
-        "AtrSprd": 15.5,
-        "AtrVWAP": 1.35,
-        "AtrHoD": 1.98
+        "ZenV": "36.47",
+        "ZenP": "5.1",
+        "AtrSprd": "15.5",
+        "AtrVWAP": "1.35",
+        "AtrHoD": "1.98"
     },
     {
         "Symbol": "WORX",
-        "Price": 1.4,
+        "Price": "1.4",
         "Volume": "22.7M",
-        "ZenV": -0.27,
-        "ZenP": 3.43,
-        "AtrSprd": 5,
-        "AtrVWAP": -0.6,
-        "AtrHoD": 8.4
+        "ZenV": "-0.27",
+        "ZenP": "3.43",
+        "AtrSprd": "5",
+        "AtrVWAP": "-0.6",
+        "AtrHoD": "8.4"
     },
     {
         "Symbol": "TNMG",
-        "Price": 0.69,
+        "Price": "0.69",
         "Volume": "8.7M",
-        "ZenV": -4.12,
-        "ZenP": 3.25,
+        "ZenV": "-4.12",
+        "ZenP": "3.25",
         "AtrSprd": "∞",
-        "AtrVWAP": 1.46,
-        "AtrHoD": 34.54
+        "AtrVWAP": "1.46",
+        "AtrHoD": "34.54"
     },
     {
         "Symbol": "FMTO",
-        "Price": 4.89,
+        "Price": "4.89",
         "Volume": "6M",
-        "ZenV": -7.13,
-        "ZenP": 3.12,
-        "AtrSprd": 7.5,
-        "AtrVWAP": 1.33,
-        "AtrHoD": 21.67
+        "ZenV": "-7.13",
+        "ZenP": "3.12",
+        "AtrSprd": "7.5",
+        "AtrVWAP": "1.33",
+        "AtrHoD": "21.67"
     },
     {
         "Symbol": "TZA",
-        "Price": 26.25,
+        "Price": "26.25",
         "Volume": "217k",
-        "ZenV": "-",
-        "ZenP": 3.6,
-        "AtrSprd": 6.88,
-        "AtrVWAP": 1.8,
-        "AtrHoD": 0.16
+        "ZenV": "3.6",
+        "ZenP": "2.11",
+        "AtrSprd": "6.88",
+        "AtrVWAP": "1.8",
+        "AtrHoD": "0.16"
     },
     {
         "Symbol": "SQQQ",
-        "Price": 55.09,
+        "Price": "55.09",
         "Volume": "6.8M",
-        "ZenV": "-",
-        "ZenP": 13.42,
-        "AtrSprd": 9.08,
-        "AtrVWAP": 2.23,
-        "AtrHoD": 3.3
+        "ZenV": "-13.42",
+        "ZenP": "1.9",
+        "AtrSprd": "20.8",
+        "AtrVWAP": "3.61",
+        "AtrHoD": "0.29"
     },
     {
         "Symbol": "SOXS",
-        "Price": 49.04,
+        "Price": "49.04",
         "Volume": "4.7M",
-        "ZenV": -14.06,
-        "ZenP": 1.31,
-        "AtrSprd": 4.57,
-        "AtrVWAP": 2.65,
-        "AtrHoD": 0.84
+        "ZenV": "-14.06",
+        "ZenP": "1.31",
+        "AtrSprd": "4.57",
+        "AtrVWAP": "2.65",
+        "AtrHoD": "0.84"
     }
 ]
