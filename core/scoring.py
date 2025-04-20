@@ -77,17 +77,12 @@ def mark_field(score_func, value, *args):
     return f"{value:.2f}o"
 
 def mark_significance(row, previous_vwap=None):
-    row["Prize"] = float(row.get("Prize", 0))
-    row["Volume"] = float(row.get("Volume", 0))
-
+    row["Prize_fmt"]  = f"{row['Prize']:.2f}"
+    row["Volume_fmt"] = f"{row['Volume']:.0f}"
     row["ZENp"]    = mark_field(score_zenp, row["ZENp"])
     row["AtrSprd"] = mark_field(score_atrsprd, row["AtrSprd"])
     row["AtrVWAP"] = mark_field(score_atrvwap, row["AtrVWAP"])
     row["AtrHoD"]  = mark_field(score_atrhod, row["AtrHoD"])
     row["ZenV"]    = mark_field(score_zenv, row["ZenV"])
-
-    # Formatierte Ausgabe ohne Kennzeichnung
-    row["Prize_fmt"]  = f"{row['Prize']:.2f}"
-    row["Volume_fmt"] = f"{row['Volume']:.0f}"
 
     return row

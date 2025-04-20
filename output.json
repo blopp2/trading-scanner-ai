@@ -1,72 +1,32 @@
 [
   {
-    "Symbol": "VERO",
-    "Volume": 8500000,
-    "ZenV": "36.47",
-    "AtrSprd": "15.5",
-    "AtrVWAP": "1.35",
-    "AtrHoD": "1.98",
-    "Prize": 12.08,
-    "ZENp": 5.1
+    "Symbol": "FATN",
+    "Volume": 98000,
+    "ZenV": 6.37,
+    "AtrSprd": 1.28,
+    "AtrVWAP": 10.99,
+    "AtrHoD": 16.01,
+    "Prize": 14.0,
+    "ZENp": 1.7
   },
   {
-    "Symbol": "WORX",
-    "Volume": 22700000,
-    "ZenV": "-0.27",
-    "AtrSprd": "5",
-    "AtrVWAP": "-0.6",
-    "AtrHoD": "8.4",
-    "Prize": 1.4,
-    "ZENp": 3.43
+    "Symbol": "PUBM",
+    "Volume": 224000,
+    "ZenV": 3.8,
+    "AtrSprd": 0.96,
+    "AtrVWAP": 16.9,
+    "AtrHoD": 16.57,
+    "Prize": 9.15,
+    "ZENp": 0.32
   },
   {
-    "Symbol": "TNMG",
-    "Volume": 8700000,
-    "ZenV": "-4.12",
-    "AtrSprd": "\u221e",
-    "AtrVWAP": "1.46",
-    "AtrHoD": "34.54",
-    "Prize": 0.69,
-    "ZENp": 3.25
-  },
-  {
-    "Symbol": "FMTO",
-    "Volume": 6000000,
-    "ZenV": "-7.13",
-    "AtrSprd": "7.5",
-    "AtrVWAP": "1.33",
-    "AtrHoD": "21.67",
-    "Prize": 4.89,
-    "ZENp": 3.12
-  },
-  {
-    "Symbol": "TZA",
-    "Volume": 217000,
-    "ZenV": "3.6",
-    "AtrSprd": "6.88",
-    "AtrVWAP": "1.8",
-    "AtrHoD": "0.16",
-    "Prize": 26.25,
-    "ZENp": 2.11
-  },
-  {
-    "Symbol": "SQQQ",
-    "Volume": 6800000,
-    "ZenV": "-13.42",
-    "AtrSprd": "20.8",
-    "AtrVWAP": "3.61",
-    "AtrHoD": "0.29",
-    "Prize": 55.09,
-    "ZENp": 1.9
-  },
-  {
-    "Symbol": "SOXS",
-    "Volume": 4700000,
-    "ZenV": "-14.06",
-    "AtrSprd": "4.57",
-    "AtrVWAP": "2.65",
-    "AtrHoD": "0.84",
-    "Prize": 49.04,
-    "ZENp": 1.31
+    "Symbol": "ITOS",
+    "Volume": 155000,
+    "ZenV": 3.41,
+    "AtrSprd": 0.56,
+    "AtrVWAP": 18.57,
+    "AtrHoD": 18.91,
+    "Prize": 6.54,
+    "ZENp": 0.26
   }
 ]

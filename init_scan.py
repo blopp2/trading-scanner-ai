@@ -1,42 +1,134 @@
+"""
+Trading Scanner Controller
+
+Dieses Programm ermöglicht es, einen Bereich des Bildschirms auszuwählen,
+einen Screenshot dieses Bereichs aufzunehmen und über die ChatGPT-Vision-API
+analysieren zu lassen.
+
+Bedienung:
+1. Starte das Programm: python scan_controller.py
+2. Klicke auf "Region auswählen" und zeichne im erscheinenden Fenster
+das rote Rechteck per Drag & Drop um den gewünschten Bildschirmausschnitt.
+   - Bestätige die Auswahl mit Enter
+3. Du erhältst eine Meldung, dass der Bereich gespeichert wurde.
+4. Klicke auf "Region aktualisieren", wenn du einen neuen Bereich definieren willst.
+5. Klicke auf "Screenshot & Analyse", um den gespeicherten Bereich zu capturen.
+   - Der Screenshot wird als selected_region.png gespeichert.
+   - Die Daten werden an die ChatGPT-API geschickt und die JSON-Antwort im
+     großen Textfeld ausgegeben.
+
+Voraussetzungen:
+- Python 3.8+
+- Installierte Pakete: pyautogui, pillow, numpy, opencv-python, openai, python-dotenv
+- OpenAI-API-Key in .env-Datei: OPENAI_API_KEY=dein_schluessel
+
+Dateien:
+- area.json: speichert die zuletzt gewählte Region
+- selected_region.png: temporärer Screenshot des Bereichs
+- output.json: JSON-Antwort der API
+"""
+import tkinter as tk
+from tkinter import messagebox, scrolledtext
 import pyautogui
-from PIL import Image, ImageDraw
-import pytesseract
+from PIL import Image
 import json
-from pytesseract import Output
+import numpy as np
+import cv2
+import os
+from vision_engine.gpt4_vision import analyze_trading_scanner
 
-# Schritt 1: Screenshot vom gesamten Bildschirm machen
-img = pyautogui.screenshot()
-img.save("full_screen.png")
+# Pfad für area.json
+AREA_FILE = "area.json"
 
-# Schritt 2: OCR auf Screenshot anwenden
-data = pytesseract.image_to_data(img, output_type=Output.DICT)
+class TradingScannerGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Trading Scanner Controller")
+        self.region = self.load_region()
 
-# Schritt 3: Suche nach dem Wort "Momentum"
-found = False
-highlight_img = img.copy()
-draw = ImageDraw.Draw(highlight_img)
+        # Buttons
+        btn_frame = tk.Frame(root)
+        btn_frame.pack(pady=10)
 
-for i, word in enumerate(data["text"]):
-    if word.isupper() and 1 <= len(word) <= 5 and word.isalpha():
-        # erweiterte Region um Symbol-Treffer
-        x = data["left"][i]
-        y = max(0, data["top"][i] - 40)   # 40 px nach oben
-        w = 500                           # breite bis AtrHoD
-        h = 280                           # hoch genug für alle Zeilen
+        self.select_btn = tk.Button(btn_frame, text="Region auswählen", command=self.select_region)
+        self.select_btn.grid(row=0, column=0, padx=5)
 
-        # Bereich speichern
-        with open("area.json", "w") as f:
+        self.update_btn = tk.Button(btn_frame, text="Region aktualisieren", command=self.select_region)
+        self.update_btn.grid(row=0, column=1, padx=5)
+
+        self.capture_btn = tk.Button(btn_frame, text="Screenshot & Analyse", command=self.capture_and_analyze)
+        self.capture_btn.grid(row=0, column=2, padx=5)
+
+        # Label für Region
+        self.region_label = tk.Label(root, text=self.region_text())
+        self.region_label.pack(pady=5)
+
+        # Textausgabe
+        self.output_text = scrolledtext.ScrolledText(root, width=80, height=20)
+        self.output_text.pack(padx=10, pady=10)
+
+    def region_text(self):
+        if self.region:
+            x, y, w, h = self.region
+            return f"Aktueller Bereich: x={x}, y={y}, w={w}, h={h}"
+        return "Kein Bereich ausgewählt."
+
+    def load_region(self):
+        if os.path.exists(AREA_FILE):
+            with open(AREA_FILE, "r") as f:
+                r = json.load(f)
+                return r["x"], r["y"], r["w"], r["h"]
+        return None
+
+    def save_region(self, x, y, w, h):
+        with open(AREA_FILE, "w") as f:
             json.dump({"x": x, "y": y, "w": w, "h": h}, f)
+        self.region = (x, y, w, h)
+        self.region_label.config(text=self.region_text())
 
-        print(f"✅ Bereich erkannt bei: x={x}, y={y}, w={w}, h={h}")
+    def select_region(self):
+        # Screenshot
+        full_img = pyautogui.screenshot()
+        img_cv = cv2.cvtColor(np.array(full_img), cv2.COLOR_RGB2BGR)
+        # ROI-Auswahl
+        messagebox.showinfo("Region auswählen", "Ziehe nun den gewünschten Bereich im geöffneten Fenster und bestätige mit Enter.")
+        x, y, w, h = cv2.selectROI("Select ROI", img_cv, fromCenter=False, showCrosshair=True)
+        cv2.destroyAllWindows()
+        if w > 0 and h > 0:
+            self.save_region(int(x), int(y), int(w), int(h))
+            messagebox.showinfo("Bereich gespeichert", f"x={x}, y={y}, w={w}, h={h}")
+        else:
+            messagebox.showwarning("Abgebrochen", "Keine Region ausgewählt.")
 
-        # Highlight zur Kontrolle zeichnen
-        draw.rectangle([x, y, x + w, y + h], outline="red", width=3)
-        highlight_img.save("ocr_debug.png")
-        print("🔍 Vorschau gespeichert als ocr_debug.png")
+    def capture_and_analyze(self):
+        if not self.region:
+            messagebox.showerror("Fehler", "Bitte zuerst einen Bereich auswählen.")
+            return
+        x, y, w, h = self.region
+        full_img = pyautogui.screenshot()
+        region_img = full_img.crop((x, y, x+w, y+h))
+        tmp_path = "selected_region.png"
+        region_img.save(tmp_path)
 
-        found = True
-        break
+        # API-Aufruf
+        self.output_text.delete(1.0, tk.END)
+        self.output_text.insert(tk.END, "Analysiere...")
+        self.root.update()
+        try:
+            analyze_trading_scanner(tmp_path)
+            # Lade result.json und zeige Inhalt
+            if os.path.exists("output.json"):
+                with open("output.json", "r") as f:
+                    data = json.load(f)
+                self.output_text.delete(1.0, tk.END)
+                self.output_text.insert(tk.END, json.dumps(data, indent=2))
+            else:
+                self.output_text.insert(tk.END, "Keine output.json gefunden.")
+        except Exception as e:
+            self.output_text.delete(1.0, tk.END)
+            self.output_text.insert(tk.END, f"Fehler bei Analyse: {e}")
 
-if not found:
-    print("❌ Bereich 'Momentum' nicht gefunden. Bitte Screenshot prüfen.")
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = TradingScannerGUI(root)
+    root.mainloop()

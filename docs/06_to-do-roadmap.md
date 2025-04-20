@@ -1,79 +1,57 @@
-# 🗺️ To-Do & Roadmap
+# 06_to-do-roadmap.md
 
-Diese Roadmap zeigt den aktuellen Projektstatus und geplante Schritte für die nächsten Entwicklungsphasen.
+## ✅ Erledigt (Q1–Q2 2025)
 
----
+### 🔍 GPT Vision Integration
+- [x] GPT-4o eingebunden (Bild → JSON Parsing)
+- [x] Volumen-Konvertierung (M, K, `,` → Integer)
+- [x] Fallback-Parser für unvollständige GPT-Antworten
+- [x] Feld-Normalisierung (`Price` → `Prize`, `ZenP` → `ZENp`)
 
-## ✅ Abgeschlossen
+### 📈 Scoring-System
+- [x] Trennung zwischen `Score` und `LongScore`
+- [x] Markierung visuell über `+`, `o`, `-` via Scoring-Logik
+- [x] Modulare Bewertungsfunktionen in `scoring.py`
+- [x] Spaltenformate `Prize_fmt`, `Volume_fmt`
 
-- Projektstruktur & GitHub-Repo eingerichtet
-- Architekturübersicht dokumentiert
-- Scoring-Modell definiert (ZENp, VWAP, Spread etc.)
-- `setup.sh` zur Projektinitialisierung erstellt
-- Markdown-basierte Projektdokumentation integriert
-
----
-
-## 🛠️ In Arbeit
-
-### 🔍 GPT-4o Vision Integration
-
-- [ ] Screenshot-Input vorbereiten (PNG/JPG)
-- [ ] Prompt-Template erstellen
-- [ ] Antwort strukturieren (Tabellen-JSON oder CSV)
-- [ ] Vision-Auswertung testen (Beispiel-Screenshot FMTO)
-
-### 🎨 Overlay-System
-
-- [ ] Overlay-Modul mit Pillow oder OpenCV
-- [ ] Farbcode basierend auf Score
-- [ ] Positionierung anhand von Symbolzeilen
-- [ ] Exportiertes Bild mit Score-Annotation
+### 📤 Output & Steuerung
+- [x] Strukturierte Ausgabe mit Spaltenreihenfolge in `main.py`
+- [x] Ausgabe als CSV und JSON
+- [x] Timestamp in jeder Zeile
 
 ---
 
-## 🧭 Geplant (Priorität A – Funktionalität)
+## 🧩 Offene To-Dos (Q2–Q3 2025)
 
-### 🚀 Live-Aktualisierung
+### 🚀 Automatisierung
+- [ ] Auto-Screenshot-Watching (Ordnerüberwachung, Trigger → Analyse)
+- [ ] Batch-Modus für mehrere Screenshots (z. B. Tagesverlauf)
+- [ ] Snapshot-Uhrzeit im Dateinamen erfassen / extrahieren
 
-- [ ] Automatisches Screenshot-Polling (alle X Sekunden)
-- [ ] Watcher-Modul für Scans
-- [ ] Wechselerkennung im Stream (Neues Symbol im Fokus)
+### 📊 UI/Visualisierung
+- [ ] Streamlit-Frontend für Live-Scoring & Visualisierung
+- [ ] Sortierbare Tabellen mit Filter (Score, Preis, Volumen)
+- [ ] Score-Farbcodierung (Heatmap-Stil)
 
-### 🔔 Alerts & Reaktionen
+### 🧠 Datenquellen & Technik
+- [ ] Integration von Live-VWAP/ATR-Daten aus API (z. B. Polygon, Finnhub)
+- [ ] Berechnung von ZENp auf Basis echter VWAP (optional)
+- [ ] Snapshot-Archivierung (JSON + PNG pro Analyse)
 
-- [ ] VWAP-Flip erkennen & loggen
-- [ ] Audio-/Popup-Alert bei starkem Setup (+3 oder mehr)
-- [ ] E-Mail/Discord/Telegram-Integration (optional)
-
----
-
-## 📊 Geplant (Priorität B – Analyse & UI)
-
-### 📈 Visualisierung & UI
-
-- [ ] Streamlit- oder Tkinter-Interface mit Bewertungsliste
-- [ ] Ranking-Tabelle mit Filteroptionen (Score ≥ X)
-- [ ] Heatmap pro Score-Bereich (Farbe nach Stärke)
-
-### 🧠 Scoring-Verlauf & Historie
-
-- [ ] Scoring-History pro Symbol speichern (CSV)
-- [ ] Nachträgliche Erfolgskontrolle (Kurs vs Score)
-- [ ] Backtest-Modul: Welche Scores führen zu Erfolgen?
+### 🛠️ TradingView-Kompatibilität
+- [ ] Exportierbare Scanner-Profile (Premarket Movers)
+- [ ] Automatischer Screenshot mit Hotkey oder Browser-Erweiterung
+- [ ] Anbindung an Watchlists (via API oder manuell)
 
 ---
 
-## 🧪 Visionen für später
-
-- [ ] Automatischer Screener (YouTube OCR Livestream)
-- [ ] API-Anbindung an Broker (Paper-Trading?)
-- [ ] Training eines Custom-Modells für Setup-Klassifizierung
+## ✨ Nice-to-Have Ideen
+- Telegram-/Discord-Benachrichtigung bei Top-Scans
+- Export nach Excel / Google Sheets
+- Chart-Marker basierend auf Score direkt in TradingView (manuell oder Pine Script)
+- Analyse von Aftermarket & Intraday-Daten (2 Modi)
 
 ---
 
-## 📍 Nächster Fokus (Sprint 1)
-
-1. GPT-4o Vision-Pipeline zum Laufen bringen
-2. Overlay für Scores pro Symbol auf Screenshot
-3. Erste Live-Testung mit regelmäßigem Screenshot
+## 🧭 Zielbild: „Scanner Copilot“
+> Ein halbautomatischer Assistent, der Screenshots verarbeitet, bewertet und priorisierte Kandidaten liefert – inklusive Alerts, Visualisierung und Archivierung.

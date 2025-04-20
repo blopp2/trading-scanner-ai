@@ -1,72 +1,70 @@
-# 🧠 Prompting für GPT-4o Vision
+# 04_prompting_gpt4o.md
 
 ## 🎯 Ziel
-
-Screenshots aus einem Trading-Scanner sollen automatisiert ausgewertet werden, um folgende Werte pro Zeile/Symbol zu extrahieren:
-
-- Symbol
-- ZENp
-- AtrSprd
-- AtrVWAP
-- AtrHoD
-- ZenV
-
-Ziel ist es, die Daten maschinenlesbar als JSON weiterzuverarbeiten und mit einem Scoring-Modell zu bewerten.
+Die GPT-4o Vision-Schnittstelle extrahiert strukturierte Trading-Daten aus Screenshots der Scanner-Oberfläche (z. B. TradingView oder Finviz).
 
 ---
 
-## 📸 Haupt-Prompt an GPT-4o
+## 📤 Prompt-Design für Bildauswertung
+Die Vision-Komponente verwendet folgenden Prompt:
 
 ```text
-Extrahiere aus diesem Screenshot pro Zeile die folgenden Spalten:
-Symbol, ZENp, AtrSprd, AtrVWAP, AtrHoD, ZenV
+Extrahiere aus dem Screenshot pro Zeile die folgenden Spalten:
+Symbol, Price, Volume, ZenV, ZenP, AtrSprd, AtrVWAP, AtrHoD.
+Gib ausschließlich ein korrekt formatiertes JSON-Array zurück.
+Keine Kommentare, keine Erklärungen.
+Beginne mit [ und schließe mit ].
+```
 
-Gib das Ergebnis als JSON-Array zurück. Beispiel:
+Der Prompt wird zusammen mit dem Bild an `gpt-4o` gesendet. Die Bilddaten werden Base64-kodiert.
 
+---
+
+## 📥 GPT-Response: Parsing & Validierung
+Das Modul `vision_engine/gpt4_vision.py` übernimmt folgende Schritte:
+
+1. 🔍 **Antwort bereinigen**:
+   - Entfernt ```json oder ```-Markdown-Blöcke
+   - Strip & Clean
+
+2. 🧠 **Parsing mit Fallback**:
+   - Standard: `json.loads()`
+   - Fallback: `literal_eval()` (z. B. bei unvollständigen Antworten)
+   - Zeilenweises Parsen für Teilergebnisse, falls GPT-Output abgeschnitten ist
+
+3. 🔧 **Normalisierung**:
+   - `Price` → `Prize` (float)
+   - `ZenP` → `ZENp` (float)
+   - `Volume`: konvertiert Formate wie `4.5M`, `217K`, `1,000,000` in Integer
+
+4. 💾 **Speicherung**:
+   - `output.json` → für Weiterverarbeitung
+   - `raw_gpt_response.txt` → Debug-Zwecke
+
+---
+
+## 🧾 Beispiel-Antwort (korrekt)
+```json
 [
-  {
-    "Symbol": "SQQQ",
-    "ZENp": "1.99",
-    "AtrSprd": "2.05",
-    "AtrVWAP": "1.46",
-    "AtrHoD": "0.18",
-    "ZenV": "13.42"
-  },
-  ...
+  {"Symbol": "SQQQ", "Price": "55.09", "Volume": "6.8M", "ZenV": "13.42", "ZenP": "1.9", "AtrSprd": "2.08", "AtrVWAP": "0.62", "AtrHoD": "0.64"},
+  {"Symbol": "SOXS", "Price": "49.04", "Volume": "4.7M", "ZenV": "14.06", "ZenP": "1.31", "AtrSprd": "4.57", "AtrVWAP": "2.65", "AtrHoD": "0.84"}
 ]
 ```
 
 ---
 
-## 🧾 Formatierungsregeln
-
-- Ignoriere visuelle Trennlinien oder Icons
-- Entferne Sonderzeichen wie `%`, `$`, `±` sofern vorhanden
-- Erkenne auch Sonderwerte wie "∞" korrekt als Text
-
----
-
-## 💬 Optionale Nachbearbeitung
-
-Folgende Informationen können in einer zweiten Anfrage hinzugefügt werden:
-
-- Bitte ignoriere Leerzeilen oder unvollständige Einträge
-- Gib nur vollständig erkannte Zeilen aus
+## ⚠️ Typische Fehler & Gegenmaßnahmen
+| Problem                        | Lösung                                                   |
+|-------------------------------|-----------------------------------------------------------|
+| Unvollständiger JSON-Output   | Zeilenweises Reparatur-Parsing (abgeschlossene Objekte)   |
+| Markdown-Wrapper (` ``` `)    | Automatisch entfernt vor Parsing                         |
+| Volumen mit Suffix (z. B. M)  | Wird mit `parse_volume()` in Integer umgewandelt         |
+| Falsche Feldnamen             | `Price`/`ZenP` werden umbenannt und gecastet             |
 
 ---
 
-## 🌐 Verknüpfung zum Projekt
+## 🔮 Erweiterungsideen
+- Automatisches Screenshot-Watching mit OCR-Vorverarbeitung
+- Auto-Retry bei GPT-Antwort < 3 Objekten
+- Integration in Streamlit zur Live-Visualisierung
 
-Das gesamte Projekt ist auf GitHub dokumentiert:
-
-👉 [GitHub Repository: trading-scanner-ai](https://github.com/blopp2/trading-scanner-ai)
-
-Dort findest du u. a.:
-
-- Vision-Modul: `vision_engine/gpt4_vision.py`
-- Bewertung & Scoring: `core/process_response.py`
-- Scoring-Logik: `core/scoring.py`
-
----
-
-Letztes Update: automatisch generiert am `2025-04-12`
